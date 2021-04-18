@@ -13,10 +13,10 @@
       "sizes": "512x512"
     }
   ],
-  "start_url": "/nanolights/",
+  "start_url": "/nanohome/index.html",
   "background_color": "#ffffff",
   "display": "standalone",
-  "scope": "/nanolights/",
+  "scope": "/nanohome/",
   "theme_color": "#3367D6",
   "description": "Nano home controller"
 }

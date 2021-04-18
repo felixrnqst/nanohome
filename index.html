@@ -43,7 +43,7 @@
 				TweenLite.to($('#preloader'), 0.15, {opacity: 0, ease:Sine.easeInOut, onComplete: () => setTimeout(() => $('#preloader').remove(), 200)})
 			}});
         }
-        window.addEventListener('load', () => connect(true, removePreloader));
+        window.addEventListener('load', () => removePreloader()/*connect(true, removePreloader)*/);
 
     </script>
 </head>
