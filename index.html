@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+	<link rel="manifest" href="manifest.json" crossorigin="use-credentials">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+
+	<link rel="apple-touch-startup-image" href="launch-iphone-8.png">
+	<meta name="apple-mobile-web-app-status-bar-style" content="default">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<link rel="apple-touch-icon" href="img/icon2-192.png">
+
+	<title>Home</title>
+	<link rel="stylesheet" href="InterWeb/inter.css">
+	<link rel="stylesheet" type="text/css" href="css/icofont.min.css">
+	<link rel="stylesheet" href="css/style.css">
+
+	<!-- Preloader -->
+    <style>
+        #preloader {position: fixed; z-index: 101; height: 100vh; width: 100vw; background: #fff; display: flex; align-items: center; justify-content: center; transition: opacity 500ms ease-in; }
+		@media (max-width: 480px) and (-webkit-max-device-pixel-ratio: 1) {
+			#preloader img {width: 35%; height: auto;}
+		}
+		@media (min-width: 769px) and (-webkit-min-device-pixel-ratio: 2) {
+			#preloader img {width: 35%; height: auto;}
+		}
+		@media (min-width: 481px) and (max-width: 768px) and (-webkit-max-device-pixel-ratio: 1) {
+			#preloader img {width: 25%; height: auto;}
+		}
+		@media (min-width: 769px) and (max-width: 1000px) and (-webkit-max-device-pixel-ratio: 1) {
+			#preloader img {width: 20%; height: auto; }
+		}
+		@media (min-width: 1001px) and (-webkit-max-device-pixel-ratio: 1) {
+			#preloader img {width: 15%; height: auto; }
+		}
+	</style>
+    <script>
+        var isLoadingFinished = false;
+
+        function removePreloader(){
+			TweenLite.to($('#preloader img'), 0.15, {transform: 'scale(0.9)', ease:Sine.easeInOut, onComplete: () => {
+				TweenLite.to($('#preloader img'), 0.25, {transform: 'scale(10)', ease:Sine.easeInOut})
+				TweenLite.to($('#preloader'), 0.15, {opacity: 0, ease:Sine.easeInOut, onComplete: () => setTimeout(() => $('#preloader').remove(), 200)})
+			}});
+        }
+        window.addEventListener('load', () => connect(true, removePreloader));
+
+    </script>
+</head>
+<body ontouchstart="">
+<div id="preloader">
+	<img class="icon" src="img/icon2-shaded.png">
+</div>
+
+<canvas id="animgrad"></canvas><div id="contentcontainer">
+<div id="header">
+    <h1>Home</h1>
+	<span id="statusdot"></span>
+	<div class="centercontainer">
+		<button class="reload" onclick="deleteCaches(reload)">R</button>
+	</div>
+	<div class="vitals">
+		<p><span class="temp">-</span>&#730;C</p>
+		<p><span class="light">-</span>%<i class="icofont-sun"></i></p>
+	</div>
+</div>
+<div class="shadowcreator"><div class="section">
+	<ul>
+		<div class="group">
+		<li>
+			<div class="subdivider"><p>Lights</p></div><div class="subdivider"></div>
+			<div class="subdivider"><img class="loader" src="img/loading.gif"><label class="switch"><input type="checkbox" class="mainlights autohandle" data-item="light"><span class="slider round"></span></label></div>
+		</li>
+		<li><div class="subdivider"><button class="autohandle" data-item="desk"><i class="icofont-lamp-light"></i></button></div><div class="subdivider"><button class="autohandle" data-item="led"><i class="icofont-sun"></i></button></div><div class="subdivider"><button class="autohandle" data-item="small"><i class="icofont-light-bulb"></i></button></div></li>
+		</div>
+		<li class="spacer"></li>
+		<li><div class="subdivider"><p>Alarm</p></div><div class="subdivider"><input type="time" class="alarmtime"><span class="alarmokay">✓</span></div><div class="subdivider"><img class="loader" src="img/loading.gif"><label class="switch"><input type="checkbox" class="alarm autohandle" data-item="alarm"><span class="slider round"></span></label></div></li>
+		<li><div class="subdivider l2"><p>Toggle pin 13</p></div><div class="subdivider"><img class="loader" src="loading.gif"><label class="switch"><input type="checkbox" class="pintoggle"><span class="slider round"></span></label></div></li>
+		<li class="spacer"></li>
+		<!-- <li><div clas="subdivider"><p>Info</div><div clas="subdivider"><p class="devicewidth"></p></div><div clas="subdivider"><p class="devicerealwidth"></p></div></li> -->
+		<li class="navigation"><button class="navhandle" data-item="A"><i class="icofont-caret-left"></i></button><button class="navhandle" data-item="AB"><i class="icofont-caret-left"></i><i class="icofont-caret-right"></i></button><button class="navhandle" data-item="B"><i class="icofont-caret-right"></i></button></li>
+	</ul>
+</div></div>
+
+</div></body>
+<script src="js/jquery.js"></script>
+<script type="text/javascript" src="js/granim.min.js"></script>
+<script type="text/javascript" src="js/TweenMax.min.js"></script>
+<script>
+var CommunicationsDelay = 1000; // 1 second
+
+if ('serviceWorker' in navigator) { //service worker for PWA
+  navigator.serviceWorker.register('js/service-worker.js');
+}
+
+$( document ).ready(() => {
+	// canvas
+	var granimInstance = new Granim({
+		element: '#animgrad',
+		direction: 'diagonal',
+		isPausedWhenNotInView: true,
+		states : {
+			"transitionSpeed": 5000,
+			"default-state": {
+				gradients: [
+					['#00e5d8', '#e114aa'],
+					['#ff9966', '#ff5e62'],
+	                ['#64c0ff', '#50ff9e'],
+					['#00F260', '#0575E6'],
+					['#e114aa', '#f05053']
+				]
+			}
+		}
+	});
+
+	// if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {// dark mode
+	// 	$('body').addClass('dark');
+	// }
+
+	// window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+	//   console.log(`changed to ${e.matches ? "dark" : "light"} mode`)
+	//   if(e.matches){
+	// 	  $('body').addClass('dark');
+	//   }else{
+	// 	  $('body').removeClass('dark');
+	//   }
+	// });
+
+	dimensionCalculator()
+	$(window).resize(dimensionCalculator);
+
+	$('#statusdot').click(() => connect());
+	$('.autohandle').on('change click', function(){ //Handle switch & button clicks
+		if($('body').hasClass('connected')){
+			var elem = $(this);
+			var name = elem.attr('data-item');
+			var obj = {};
+			if(elem.get(0).tagName.toLowerCase() == 'input'){
+				if(name == 'light'){ //Dark mode depends on light state
+					elem.prop('checked') == 1 ? $('body').removeClass('dark') : $('body').addClass('dark')
+				}
+				//In future only add loader if taking over ... seconds
+				setTimeout(() => elem.parent().parent().parent().addClass("loading"), 400);
+				obj[name] = (elem.prop('checked') ? 1 : 0);
+				sendItem(obj).then(() => elem.parent().parent().parent().removeClass("loading"));
+			}else if(elem.get(0).tagName.toLowerCase() == 'button'){
+				setTimeout(() => elem.addClass("loading"), 400);
+				obj[name] = (elem.hasClass('selected') ? 0 : 1);
+				elem.hasClass('selected') ? elem.removeClass('selected') : elem.addClass('selected');
+				sendItem(obj).then(() => {elem.removeClass("loading")});
+			}
+		}
+	});
+	$('.navhandle').on('click', function(){ //Handle navigation clicks
+		if($('body').hasClass('connected')){
+			var elem = $(this);
+			var name = elem.attr('data-item');
+			var obj = {};
+			setTimeout(() => elem.addClass("loading"), 400);
+			elem.addClass('selected');
+			obj[name] = 1;
+			sendItem(obj).then(() => {elem.removeClass("loading").removeClass('selected')});
+		}
+	});
+	$('.alarmtime').change(() => {
+		if($('body').hasClass('connected')){
+			console.log($('.alarmtime').val());
+			$('.alarmokay').addClass('visible'); //Add okay button
+			$('.alarmokay').one('click', () => {
+				if($('body').hasClass('connected')){
+					sendAlarmTime($('.alarmtime').val(), $('.alarmtime'));
+					$('.alarmokay').removeClass('visible');
+				}
+			})
+		}
+	});
+	$('.pintoggle').change(() => {
+		if($('body').hasClass('connected')){togglePin($('.pintoggle'))}
+	});
+});
+
+function deleteCaches(endFunction){
+	console.log("deleting caches");
+	caches.keys().then(cachesToDelete => {
+		return Promise.all(cachesToDelete.map(cacheToDelete => {
+			return caches.delete(cacheToDelete);
+		}));
+	}).then(()=> {if(endFunction !== undefined){endFunction()}});
+}
+function reload(){
+	console.log("Finished!");
+	location.reload();
+}
+
+function dimensionCalculator(){//Sets up dimensions for device size
+	// $('.devicewidth').html($(window).width() + "px");
+	// $('.devicerealwidth').html($(window).width() / window.devicePixelRatio + "px");
+	$('html').css('font-size', /*window.devicePixelRatio **/ (window.devicePixelRatio > 1 ? 120 : 100) + '%');
+}
+
+function connect(data = true, endFunction){//Get info from page
+	if(data === true){
+		$('#statusdot').attr('class','connecting');
+		$('body').removeClass('connnected').addClass('connecting');
+		//$('input[type="checkbox"]').attr('disabled','true');
+		$('input').add('.slider').add('button:not(.reload)').attr('disabled','true')
+		$.get( "http://192.168.4.1/?initialize=1", (dataR) => {
+			$('#statusdot').add('body').removeClass('connecting').addClass('connected');
+			//$('input[type="checkbox"]').removeAttr('disabled');
+			$('input').add('.slider').add('button').removeAttr('disabled');
+			$('li').removeClass('loading');
+			processData(dataR, endFunction);
+		}).fail(() => {
+	    	$('#statusdot').attr('class','disconnected');
+			//Enable reload
+			$('.reload').removeAttr('disabled');
+			if(endFunction !== undefined){endFunction()}
+			return;
+		});
+	}else if(data === false){
+		//Fail
+		connect();
+		return;
+	}else{
+		processData(data, endFunction);
+	}
+}
+
+function processData(data, endFunction){
+	data = JSON.parse(data);
+	console.log(data)
+
+	//Check time
+	if(+data.time < Math.floor(Date.now() / 1000) - 60 || data.time > Math.floor(Date.now() / 1000) + 60){
+		console.log("Time is not equal");
+		//Update time with get request
+		sendTime();
+	}else{
+		console.log("Time equal");
+	}
+	//Communicate state to checkboxes
+	$('.mainlights').prop('checked',data.other2 == 1 ? true : false);
+	data.other2 == 1 ? $('body').removeClass('dark') : $('body').addClass('dark')
+	$('.alarmtime').prop('value', data.alarmtime);
+	$('.alarm').prop('checked', data.alarm == 1 ? true : false);
+
+	data.desk == 1 ? $('button[data-item=desk]').addClass('selected') : $('button[data-item=desk]').removeClass('selected');
+	data.led == 1 ? $('button[data-item=led]').addClass('selected') : $('button[data-item=led]').removeClass('selected');
+	data.small == 1 ? $('button[data-item=small]').addClass('selected') : $('button[data-item=small]').removeClass('selected');
+
+	$('.temp').html(data.temperature);
+	$('.light').html(data.light);
+	if(endFunction !== undefined){endFunction()}
+}
+
+function sendAlarmTime(time, elem){
+	elem.parent().addClass("loading");
+	sendItem({"alarmtime": time}).then(() => elem.parent().removeClass("loading"));
+}
+
+function togglePin(elem){
+	elem.parent().parent().parent().addClass("loading");
+	sendItem({"pin": "02"}).then(() => elem.parent().parent().parent().removeClass("loading"));
+}
+
+function sendTime(){
+	setTimeout(() => sendItem({"time": Math.floor(Date.now() / 1000)}, false).then(() => console.log("Time sent!")), CommunicationsDelay);
+}
+
+async function sendItem(data, disable = true){
+	if(disable){$('input').add('.slider').add('button:not(.reload)').attr('disabled','true')}
+	return new Promise((resolve, fail) => $.get( "http://192.168.4.1", data, (data) => {$('input').add('.slider').add('button').removeAttr('disabled');connect(data);resolve();}).fail(() => {connect(false); resolve();}));
+}
+
+function Timeout(fn, interval) {
+    var id = setTimeout(() => {this.clear(); fn();}, interval);
+    this.cleared = false;
+    this.clear = function () {
+        this.cleared = true;
+        clearTimeout(id);
+    };
+}
+//Buttons for turning lights on/off etc.
+</script>
+</html>

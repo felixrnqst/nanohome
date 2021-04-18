@@ -1,0 +1,22 @@
+{
+  "short_name": "Home",
+  "name": "Home: Smart home controller",
+  "icons": [
+    {
+      "src": "img/icon2-dark-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "img/icon2-dark-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/nanolights/",
+  "background_color": "#ffffff",
+  "display": "standalone",
+  "scope": "/nanolights/",
+  "theme_color": "#3367D6",
+  "description": "Nano home controller"
+}
