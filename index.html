@@ -1,19 +1,37 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
-	<link rel="manifest" href="manifest.json" crossorigin="use-credentials">
+	<meta charset='utf-8'>
+	<title>Home</title>
+	<meta name='description' content='Home. A smart home controller'>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
 
-	<link rel="apple-touch-startup-image" href="launch-iphone-8.png">
+	<link rel='manifest' href='manifest.json'>
+	<!-- Apple -->
+	<meta name='mobile-web-app-capable' content='yes'>
+    <meta name='apple-mobile-web-app-capable' content='yes'>
+    <meta name='application-name' content='Home'>
+	<meta name='apple-mobile-web-app-status-bar-style' content='black-translucent'>
+    <meta name='apple-mobile-web-app-title' content='Home'>
+	<link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="img/launch-iphone-8.png">
+	<link rel='icon' sizes='192x192' href='/img/icon2-192.png'>
+    <link rel='apple-touch-icon' href='/images/icon2-192.png'>
+	<!-- Microsoft -->
+	<meta name='msapplication-TileImage' content='/images/icon2-192'>
+    <meta name='msapplication-TileColor' content='#00ddb4'>
+
+	<meta name='theme-color' content='#00ddb4'>
+	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+
+	<!-- <link rel="apple-touch-startup-image" href="launch-iphone-8.png">
 	<meta name="apple-mobile-web-app-status-bar-style" content="default">
 	<meta name="apple-mobile-web-app-capable" content="yes">
-	<link rel="apple-touch-icon" href="img/icon2-192.png">
+	<link rel="apple-touch-icon" href="img/icon2-192.png"> -->
 
-	<title>Home</title>
 	<link rel="stylesheet" href="InterWeb/inter.css">
 	<link rel="stylesheet" type="text/css" href="css/icofont.min.css">
 	<link rel="stylesheet" href="css/style.css">
+	<script src='js/pwacompat.min.js' async></script>
 
 	<!-- Preloader -->
     <style>
@@ -43,7 +61,7 @@
 				TweenLite.to($('#preloader'), 0.15, {opacity: 0, ease:Sine.easeInOut, onComplete: () => setTimeout(() => $('#preloader').remove(), 200)})
 			}});
         }
-        window.addEventListener('load', () => removePreloader()/*connect(true, removePreloader)*/);
+        window.addEventListener('load', () => connect(true, removePreloader));
 
     </script>
 </head>
@@ -75,7 +93,7 @@
 		</div>
 		<li class="spacer"></li>
 		<li><div class="subdivider"><p>Alarm</p></div><div class="subdivider"><input type="time" class="alarmtime"><span class="alarmokay">✓</span></div><div class="subdivider"><img class="loader" src="img/loading.gif"><label class="switch"><input type="checkbox" class="alarm autohandle" data-item="alarm"><span class="slider round"></span></label></div></li>
-		<li><div class="subdivider l2"><p>Toggle pin 13</p></div><div class="subdivider"><img class="loader" src="loading.gif"><label class="switch"><input type="checkbox" class="pintoggle"><span class="slider round"></span></label></div></li>
+		<li><div class="subdivider l2"><p>Toggle pin 13</p></div><div class="subdivider"><img class="loader" src="img/loading.gif"><label class="switch"><input type="checkbox" class="pintoggle"><span class="slider round"></span></label></div></li>
 		<li class="spacer"></li>
 		<!-- <li><div clas="subdivider"><p>Info</div><div clas="subdivider"><p class="devicewidth"></p></div><div clas="subdivider"><p class="devicerealwidth"></p></div></li> -->
 		<li class="navigation"><button class="navhandle" data-item="A"><i class="icofont-caret-left"></i></button><button class="navhandle" data-item="AB"><i class="icofont-caret-left"></i><i class="icofont-caret-right"></i></button><button class="navhandle" data-item="B"><i class="icofont-caret-right"></i></button></li>
@@ -87,11 +105,22 @@
 <script type="text/javascript" src="js/granim.min.js"></script>
 <script type="text/javascript" src="js/TweenMax.min.js"></script>
 <script>
-var CommunicationsDelay = 1000; // 1 second
 
-if ('serviceWorker' in navigator) { //service worker for PWA
-  navigator.serviceWorker.register('js/service-worker.js');
+// if ('serviceWorker' in navigator) { //service worker for PWA
+//   navigator.serviceWorker.register('service-worker.js').then(() => console.log("Service Worker Registered"));
+// }
+if('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/nanolights/service-worker.js', { scope: '/nanolights/' })
+	.then(function(registration) {
+		  console.log('Service Worker Registered');
+	});
+
+  navigator.serviceWorker.ready.then(function(registration) {
+	 console.log('Service Worker Ready');
+  });
 }
+
+var CommunicationsDelay = 1000; // 1 second
 
 $( document ).ready(() => {
 	// canvas
