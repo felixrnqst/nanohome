@@ -110,7 +110,7 @@
 //   navigator.serviceWorker.register('service-worker.js').then(() => console.log("Service Worker Registered"));
 // }
 if('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/nanolights/service-worker.js', { scope: '/nanolights/' })
+  navigator.serviceWorker.register('/nanohome/service-worker.js', { scope: '/nanohome/' })
 	.then(function(registration) {
 		  console.log('Service Worker Registered');
 	});

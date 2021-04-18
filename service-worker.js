@@ -4,17 +4,17 @@ self.addEventListener('install', e => {
   e.waitUntil(
     caches.open(cacheName).then(cache => {
       return cache.addAll([
-        `/nanolights/`,
-        `/nanolights/index.html`,
-        `/nanolights/css/style.css`,
-        `/nanolights/js/jquery.js`,
-        `/nanolights/js/granim.min.js`,
-        `/nanolights/js/TweenMax.min.js`,
-        `/nanolights/favicon.ico`,
-        `/nanolights/img/icon2-shaded.png`,
-        `/nanolights/img/icon2-dark-192.png`,
-        `/nanolights/img/icon2-dark-512.png`,
-        `/nanolights/img/launch-iphone-8.png`
+        `/nanohome/`,
+        `/nanohome/index.html`,
+        `/nanohome/css/style.css`,
+        `/nanohome/js/jquery.js`,
+        `/nanohome/js/granim.min.js`,
+        `/nanohome/js/TweenMax.min.js`,
+        `/nanohome/favicon.ico`,
+        `/nanohome/img/icon2-shaded.png`,
+        `/nanohome/img/icon2-dark-192.png`,
+        `/nanohome/img/icon2-dark-512.png`,
+        `/nanohome/img/launch-iphone-8.png`
       ])
           .then(() => self.skipWaiting());
     })
